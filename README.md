@@ -13,3 +13,8 @@ MobileVit共有三种不同的网络规模(XXS，XS，S)，参数量逐渐升高
 ![不同尺寸结果](./Resources/MobileViT_size.png) \
 在MS-COCO数据集与ImageNet数据集上对比各个轻量化网络模型的测试结果如下图所示:
 ![实验结果](./Resources/result.png)
+### 模型优化的难点
+当前针对于MobileVit-S网络模型的优化难点总结如下：
+1. 对于动态batch size的支持。Apple提供的pt与config文件无法直接生成动态batch size的TensorRT engine，需要手动调整源代码中的网络结构以及对算子图进行优化。
+2. attention、layernorm等模块TensorRT plugin的实现，数据格式支持FP32、TF32以及FP16。
+3. int8以及int8相关TensorRT plugin的实现。轻量化模型在移动端使用int8数据格式能获得更好的加速效果。
