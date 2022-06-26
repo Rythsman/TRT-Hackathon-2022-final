@@ -1,0 +1,91 @@
+[WARNING] igemm.config is not found; using default GEMM algo
+[WARNING] igemm.config is not found; using default GEMM algo
+[WARNING] igemm.config is not found; using default GEMM algo
+[WARNING] igemm.config is not found; using default GEMM algo
+[WARNING] igemm.config is not found; using default GEMM algo
+[WARNING] igemm.config is not found; using default GEMM algo
+Find Plugin ['./libmobileVit_plugin.so']!
+DisentangledAttention_TRT  1
+CustomEmbLayerNormPluginDynamic  1
+CustomEmbLayerNormPluginDynamic  2
+CustomEmbLayerNormPluginDynamic  3
+CustomFCPluginDynamic  1
+CustomGeluPluginDynamic  1
+GroupNormalizationPlugin  1
+RnRes2Br1Br2c_TRT  1
+RnRes2Br1Br2c_TRT  2
+RnRes2Br2bBr2c_TRT  1
+RnRes2Br2bBr2c_TRT  2
+RnRes2FullFusion_TRT  1
+SingleStepLSTMPlugin  1
+CustomSkipLayerNormPluginDynamic  3
+CustomSkipLayerNormPluginDynamic  4
+CustomSkipLayerNormPluginDynamic  1
+CustomSkipLayerNormPluginDynamic  2
+CustomQKVToContextPluginDynamic  3
+CustomQKVToContextPluginDynamic  1
+CustomQKVToContextPluginDynamic  2
+DLRM_BOTTOM_MLP_TRT  1
+SmallTileGEMM_TRT  1
+RNNTEncoderPlugin  1
+CustomMobileVisionTransformerPlugin  1
+GridAnchor_TRT  1
+GridAnchorRect_TRT  1
+NMS_TRT  1
+Reorg_TRT  1
+Region_TRT  1
+Clip_TRT  1
+LReLU_TRT  1
+PriorBox_TRT  1
+Normalize_TRT  1
+ScatterND  1
+RPROI_TRT  1
+BatchedNMS_TRT  1
+BatchedNMSDynamic_TRT  1
+BatchTilePlugin_TRT  1
+FlattenConcat_TRT  1
+CropAndResize  1
+CropAndResizeDynamic  1
+DetectionLayer_TRT  1
+EfficientNMS_TRT  1
+EfficientNMS_ONNX_TRT  1
+EfficientNMS_Explicit_TF_TRT  1
+EfficientNMS_Implicit_TF_TRT  1
+ProposalDynamic  1
+Proposal  1
+ProposalLayer_TRT  1
+PyramidROIAlign_TRT  1
+ResizeNearest_TRT  1
+Split  1
+SpecialSlice_TRT  1
+InstanceNormalization_TRT  1
+InstanceNormalization_TRT  2
+CoordConvAC  1
+DecodeBbox3DPlugin  1
+GenerateDetection_TRT  1
+MultilevelCropAndResize_TRT  1
+MultilevelProposeROI_TRT  1
+NMSDynamic_TRT  1
+PillarScatterPlugin  1
+VoxelGeneratorPlugin  1
+2022-06-11 21:31:46 - [34m[1mLOGS   [0m - Random seeds are set to 0
+2022-06-11 21:31:46 - [34m[1mLOGS   [0m - Using PyTorch version 1.11.0+cu113
+2022-06-11 21:31:46 - [34m[1mLOGS   [0m - Available GPUs: 1
+2022-06-11 21:31:46 - [34m[1mLOGS   [0m - CUDNN is enabled
+Succeeded loading engine!
+
+bs: Batch Size
+sl: Sequence Length
+lt: Latency (ms)
+tp: throughput (word/s)
+a0: maximum of absolute difference of output 0
+r0: median of relative difference of output 0
+----+----+--------+---------+---------+---------+-------------
+  bs|  sl|      lt|       tp|       a0|       r0| output check
+----+----+--------+---------+---------+---------+-------------
+
+   1,   1,   2.407,4.154e+02,1.330e-04,2.285e-05, Good
+  16,   1,  18.300,8.743e+02,1.903e-04,2.337e-05, Good
+  32,   1,  35.416,9.035e+02,1.633e-04,2.164e-05, Good
+  64,   1,  69.539,9.203e+02,1.889e-04,2.284e-05, Good
+ 128,   1, 138.257,9.258e+02,1.840e-04,2.185e-05, Good

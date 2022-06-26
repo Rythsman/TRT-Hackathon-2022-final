@@ -233,22 +233,22 @@ MobileVit使用**imagenet**数据集进行精度测试，使用模拟数据测�
 |implement|top1-Acc|latancy(ms)|
 |-|-|-|
 |pytorch-GPU|78.4|155.54|
-|trt-FP32|-|114.52|
-|trt-FP16|-|41.79|
+|trt-FP32|78.28|114.52|
+|trt-FP16|78.26|41.79|
 
-SSD-MobileVit使用**coco**数据集进行测试，batch_size=32，latancy包含前处理与后处理的时间：
+SSD-MobileVit使用**coco**数据集进行测试，batch_size=32，每一帧处理时间包含前处理与后处理：
 
-|implement|mAP|latancy(ms)|
+|implement|mAP|FPS|
 |-|-|-|
-|pytorch|27.7|-|
+|pytorch|27.7|42.81|
 |trt-FP32|26.4|281.95|
 |trt-FP16|26.4|362.17|
 
-> 注：int8模型尝试后发现无加速效果，具体见`经验与体会`
+> 注：分类与检测使用的测试脚本见`src/classification/autobuild.sh`与`src/detection/autobuild.sh`；模拟数据使用`src/ml-cvnets/gen-npz.py`生成
 
 -----------
 ## 五、经验与体会
-根据nsys分析结果尝试编写一些插件替换性能不足的算子，主要包括几个plugin的编写与int8 PTQ的尝试，plugin部分代码在`trt_plugin`文件夹中，但并没有能够击败tensorRT8.4的算子融合策略。
+根据nsys分析结果尝试编写一些插件替换性能不足的算子，主要包括几个plugin的编写与int8 PTQ的尝试，plugin部分代码在`trt_plugin`文件夹中，int8量化部分具体代码位于`src/Classification/int8_process.py`，但并均没有能够击败tensorRT8.4的算子融合策略。
 ### 5.1 **fastertransformer plugin 编写**
 通过上一部分分析发现TensorRT8.4已经对模型中Transformer block部分进行了比较高效的融合，如果想超过该结果需要进行更深层次的优化，所以决定开始编写基于FasterTransformer的插件，在编写插件过程中遇到了如下问题
 
@@ -343,13 +343,13 @@ for(int i = 0; i < fc->nbFields; i++) {
 <!-- #### 3.4.3 **多流问题**
 使用ft 插件后，cublas使用默认流而网络中其他层使用自己创建的流，两个不在同一个流程，可能会导致数值错误，该问题目前未得到解决 -->
 
-#### 5.2 **int8 PTQ支持**
-主要编写了`ImageNetEntropyCalibrator`,使用imagenet的validation数据进行校准,具体代码位于`src/Classification/int8_process.py`。
+### 5.2 **int8 PTQ支持**
+主要编写了`ImageNetEntropyCalibrator`,使用imagenet的validation数据进行校准。
 
-#### 5.3 **swish插件编写**
+### 5.3 **swish插件编写**
 在使用了nsys分析fp16 baseline的结果时，发现conv算子(计算密集型)与trt合并的swish算子(访存密集型)所花费的时间差不多，说明trt融合后的swish算子可能出现了memory bound，所以具有一定的优化空间。当前一共实现了两个版本的swish plugin，分别是基于oneflow-elementwise模板与cudnn API的，均能够在trt8.4中运行。
 
-#### 5.4 **插件测试结果**
+### 5.4 **插件测试结果**
 测试环境是Nvidia A10 + trt8.4，使用模拟数据对不同插件的测试结果见`result_record`文件夹
 
 

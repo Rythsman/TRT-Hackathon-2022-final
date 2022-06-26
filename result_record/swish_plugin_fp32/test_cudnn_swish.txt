@@ -1,0 +1,88 @@
+Find Plugin ['./swishPlugin.so', './trt_self_attn.so', './lnplugin.so']!
+DisentangledAttention_TRT  1
+CustomEmbLayerNormPluginDynamic  1
+CustomEmbLayerNormPluginDynamic  2
+CustomEmbLayerNormPluginDynamic  3
+CustomFCPluginDynamic  1
+CustomGeluPluginDynamic  1
+GroupNormalizationPlugin  1
+RnRes2Br1Br2c_TRT  1
+RnRes2Br1Br2c_TRT  2
+RnRes2Br2bBr2c_TRT  1
+RnRes2Br2bBr2c_TRT  2
+RnRes2FullFusion_TRT  1
+SingleStepLSTMPlugin  1
+CustomSkipLayerNormPluginDynamic  3
+CustomSkipLayerNormPluginDynamic  4
+CustomSkipLayerNormPluginDynamic  1
+CustomSkipLayerNormPluginDynamic  2
+CustomQKVToContextPluginDynamic  3
+CustomQKVToContextPluginDynamic  1
+CustomQKVToContextPluginDynamic  2
+DLRM_BOTTOM_MLP_TRT  1
+SmallTileGEMM_TRT  1
+RNNTEncoderPlugin  1
+Swish  1
+mobilebitQKVToContextPlugin  1
+mobilebitQKVToContextPlugin  2
+lnplugin  1
+GridAnchor_TRT  1
+GridAnchorRect_TRT  1
+NMS_TRT  1
+Reorg_TRT  1
+Region_TRT  1
+Clip_TRT  1
+LReLU_TRT  1
+PriorBox_TRT  1
+Normalize_TRT  1
+ScatterND  1
+RPROI_TRT  1
+BatchedNMS_TRT  1
+BatchedNMSDynamic_TRT  1
+BatchTilePlugin_TRT  1
+FlattenConcat_TRT  1
+CropAndResize  1
+CropAndResizeDynamic  1
+DetectionLayer_TRT  1
+EfficientNMS_TRT  1
+EfficientNMS_ONNX_TRT  1
+EfficientNMS_Explicit_TF_TRT  1
+EfficientNMS_Implicit_TF_TRT  1
+ProposalDynamic  1
+Proposal  1
+ProposalLayer_TRT  1
+PyramidROIAlign_TRT  1
+ResizeNearest_TRT  1
+Split  1
+SpecialSlice_TRT  1
+InstanceNormalization_TRT  1
+InstanceNormalization_TRT  2
+CoordConvAC  1
+DecodeBbox3DPlugin  1
+GenerateDetection_TRT  1
+MultilevelCropAndResize_TRT  1
+MultilevelProposeROI_TRT  1
+NMSDynamic_TRT  1
+PillarScatterPlugin  1
+VoxelGeneratorPlugin  1
+2022-06-23 23:41:09 - [34m[1mLOGS   [0m - Random seeds are set to 0
+2022-06-23 23:41:09 - [34m[1mLOGS   [0m - Using PyTorch version 1.11.0+cu113
+2022-06-23 23:41:09 - [34m[1mLOGS   [0m - Available GPUs: 1
+2022-06-23 23:41:09 - [34m[1mLOGS   [0m - CUDNN is enabled
+Succeeded loading engine!
+
+bs: Batch Size
+sl: Sequence Length
+lt: Latency (ms)
+tp: throughput (word/s)
+a0: maximum of absolute difference of output 0
+r0: median of relative difference of output 0
+----+----+--------+---------+---------+---------+-------------
+  bs|  sl|      lt|       tp|       a0|       r0| output check
+----+----+--------+---------+---------+---------+-------------
+
+   1,   1,   2.111,4.738e+02,8.821e-06,1.184e-06, Good
+  16,   1,  15.742,1.016e+03,1.335e-05,1.550e-06, Good
+  32,   1,  30.849,1.037e+03,1.383e-05,1.624e-06, Good
+  64,   1,  59.306,1.079e+03,1.574e-05,1.670e-06, Good
+ 128,   1, 115.890,1.104e+03,1.538e-05,1.683e-06, Good

@@ -1,0 +1,87 @@
+Find Plugin ['./trt_self_attn.so', './lnplugin.so']!
+DisentangledAttention_TRT  1
+CustomEmbLayerNormPluginDynamic  1
+CustomEmbLayerNormPluginDynamic  2
+CustomEmbLayerNormPluginDynamic  3
+CustomFCPluginDynamic  1
+CustomGeluPluginDynamic  1
+GroupNormalizationPlugin  1
+RnRes2Br1Br2c_TRT  1
+RnRes2Br1Br2c_TRT  2
+RnRes2Br2bBr2c_TRT  1
+RnRes2Br2bBr2c_TRT  2
+RnRes2FullFusion_TRT  1
+SingleStepLSTMPlugin  1
+CustomSkipLayerNormPluginDynamic  3
+CustomSkipLayerNormPluginDynamic  4
+CustomSkipLayerNormPluginDynamic  1
+CustomSkipLayerNormPluginDynamic  2
+CustomQKVToContextPluginDynamic  3
+CustomQKVToContextPluginDynamic  1
+CustomQKVToContextPluginDynamic  2
+DLRM_BOTTOM_MLP_TRT  1
+SmallTileGEMM_TRT  1
+RNNTEncoderPlugin  1
+mobilebitQKVToContextPlugin  1
+mobilebitQKVToContextPlugin  2
+lnplugin  1
+GridAnchor_TRT  1
+GridAnchorRect_TRT  1
+NMS_TRT  1
+Reorg_TRT  1
+Region_TRT  1
+Clip_TRT  1
+LReLU_TRT  1
+PriorBox_TRT  1
+Normalize_TRT  1
+ScatterND  1
+RPROI_TRT  1
+BatchedNMS_TRT  1
+BatchedNMSDynamic_TRT  1
+BatchTilePlugin_TRT  1
+FlattenConcat_TRT  1
+CropAndResize  1
+CropAndResizeDynamic  1
+DetectionLayer_TRT  1
+EfficientNMS_TRT  1
+EfficientNMS_ONNX_TRT  1
+EfficientNMS_Explicit_TF_TRT  1
+EfficientNMS_Implicit_TF_TRT  1
+ProposalDynamic  1
+Proposal  1
+ProposalLayer_TRT  1
+PyramidROIAlign_TRT  1
+ResizeNearest_TRT  1
+Split  1
+SpecialSlice_TRT  1
+InstanceNormalization_TRT  1
+InstanceNormalization_TRT  2
+CoordConvAC  1
+DecodeBbox3DPlugin  1
+GenerateDetection_TRT  1
+MultilevelCropAndResize_TRT  1
+MultilevelProposeROI_TRT  1
+NMSDynamic_TRT  1
+PillarScatterPlugin  1
+VoxelGeneratorPlugin  1
+2022-06-14 20:51:18 - [34m[1mLOGS   [0m - Random seeds are set to 0
+2022-06-14 20:51:18 - [34m[1mLOGS   [0m - Using PyTorch version 1.11.0+cu113
+2022-06-14 20:51:18 - [34m[1mLOGS   [0m - Available GPUs: 1
+2022-06-14 20:51:18 - [34m[1mLOGS   [0m - CUDNN is enabled
+Succeeded loading engine!
+
+bs: Batch Size
+sl: Sequence Length
+lt: Latency (ms)
+tp: throughput (word/s)
+a0: maximum of absolute difference of output 0
+r0: median of relative difference of output 0
+----+----+--------+---------+---------+---------+-------------
+  bs|  sl|      lt|       tp|       a0|       r0| output check
+----+----+--------+---------+---------+---------+-------------
+
+   1,   1,   1.096,9.124e+02,6.627e-02,9.015e-03, Bad
+  16,   1,   5.991,2.670e+03,6.985e-02,6.358e-03, Bad
+  32,   1,  11.235,2.848e+03,7.922e-02,6.599e-03, Bad
+  64,   1,  21.933,2.918e+03,7.523e-02,6.807e-03, Bad
+ 128,   1,  41.793,3.063e+03,7.942e-02,6.651e-03, Bad
