@@ -5,6 +5,12 @@
 ## 一、总述
 本次复赛我们选择使用TensorRT优化部署的模型是[MobileVit](https://arxiv.org/abs/2110.02178)，该项工作由Apple的研究者发表在ICLR2022上，项目开源在[地址](https://github.com/apple/ml-cvnets)。
 
+### 1.1 代码编译运行说明
+1. 自行下载配置tensorRT，报告中的测试结果是在A10显卡上使用tensorRT8.4GA进行测试的
+2. 运行`build_env/build.sh`文件进行代码所需的环境配置
+3. 运行`src/classification/autobuild.sh`进行mobileVit分类模型的导出及精度与速度测试
+4. 运行`src/detection/autobuild.sh`进行ssd-mobileVit检测模型的导出及精度与速度测试（注意按照sh文件内容修改相应dataset路径）
+> 说明需要自行下载ImageNet数据集以及MS-COCO数据集,同时修改`src/ml-cvnets/pretained_models/*.yaml`中dataset路径
 ---
 
 ## 二、原始模型
@@ -244,7 +250,7 @@ SSD-MobileVit使用**coco**数据集进行测试，batch_size=32，每一帧处�
 |trt-FP32|26.4|281.95|
 |trt-FP16|26.4|362.17|
 
-> 注：分类与检测使用的测试脚本见`src/classification/autobuild.sh`与`src/detection/autobuild.sh`；模拟数据使用`src/ml-cvnets/gen-npz.py`生成
+> 注：使用trt推理精度损失的主要原因是在检测模型的后处理过程使用了fastnms，在牺牲部分精度的情况下提升了推理速度。分类与检测使用的测试脚本见`src/classification/autobuild.sh`与`src/detection/autobuild.sh`；模拟数据使用`src/ml-cvnets/gen-npz.py`生成
 
 -----------
 ## 五、经验与体会

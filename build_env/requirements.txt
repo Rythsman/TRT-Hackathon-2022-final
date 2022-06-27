@@ -1,0 +1,20 @@
+ujson
+scikit-learn>=0.19.2
+scikit-image
+
+# dependency for coremltools
+coremltools>=5.0b4
+
+# dependency for MSCOCO dataset
+pycocotools
+
+# dependency for reading and writing images
+opencv-contrib-python
+
+# dependency for cityscape evaluation
+cityscapesscripts
+
+# dependency for current code
+onnx
+onnxruntime
+cython
