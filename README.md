@@ -30,8 +30,6 @@ MobileVit共有三种不同的网络规模(XXS，XS，S)，参数量逐渐升高
 4. 以MobileVit为基础网络的检测模型相应优化。
 ------------
 ## 三、优化过程
-下面结合我们的优化流程介绍在过程中遇到的一些问题
-
 
 ### 3.1 ONNX模型导出
 修改官网提供的代码导出onnx模型，这个步骤主要是参照官方提供的`main_eval.py`进行实现，通过将`multi_head_attention.py`与`mobilevit_block.py`中reshape操作的`-1`放在第一维度即可支持动态shape的输入。具体原则如下
@@ -250,11 +248,14 @@ SSD-MobileVit使用**coco**数据集进行测试，batch_size=32，每一帧处�
 |trt-FP32|26.4|281.95|
 |trt-FP16|26.4|362.17|
 
-> 注：使用trt推理精度损失的主要原因是在检测模型的后处理过程使用了fastnms，在牺牲部分精度的情况下提升了推理速度。分类与检测使用的测试脚本见`src/classification/autobuild.sh`与`src/detection/autobuild.sh`；模拟数据使用`src/ml-cvnets/gen-npz.py`生成
+> 注：尝试了**int8 ptq量化**方式，推理延时略低，但误差也变大了，故没有将其列入加速效果中。使用trt推理精度损失的主要原因是在检测模型的后处理过程使用了fastnms，在牺牲部分精度的情况下提升了推理速度。
 
 -----------
 ## 五、经验与体会
-根据nsys分析结果尝试编写一些插件替换性能不足的算子，主要包括几个plugin的编写与int8 PTQ的尝试，plugin部分代码在`trt_plugin`文件夹中，int8量化部分具体代码位于`src/Classification/int8_process.py`，但并均没有能够击败tensorRT8.4的算子融合策略。
+根据nsys分析结果尝试编写一些插件替换性能不足的算子，主要包括几个plugin的编写与int8 PTQ的尝试，**plugin部分**代码在`trt_plugin`文件夹中，**int8量化**部分具体代码位于`src/Classification/int8_process.py`。使用fastertransformer、layernorm、attention plugin后并没有提升速度，使用swish plguin、swish+conv plugin 虽然对精度提升了一个数量级，但推理延时却长了1.5%（bs=128：113.574ms vs 115.275ms），int8 ptq量化虽然推理延时小于fp16结果（bs=128：41.793ms vs 40.303ms）但却带来了比较大的误差。上述各种优化方案的具体测试结果见`result_record`文件夹，plugin相关代码在`trt_plugin`中，int8 ptq代码为`src/classification/int8_process.py`（需要自行下载imagenet校准数据集），测试环境是Nvidia A10 + trt8.4。
+
+下面简单介绍我们的优化过程，以及在该过程中遇到的一些问题。
+
 ### 5.1 **fastertransformer plugin 编写**
 通过上一部分分析发现TensorRT8.4已经对模型中Transformer block部分进行了比较高效的融合，如果想超过该结果需要进行更深层次的优化，所以决定开始编写基于FasterTransformer的插件，在编写插件过程中遇到了如下问题
 
@@ -350,13 +351,11 @@ for(int i = 0; i < fc->nbFields; i++) {
 使用ft 插件后，cublas使用默认流而网络中其他层使用自己创建的流，两个不在同一个流程，可能会导致数值错误，该问题目前未得到解决 -->
 
 ### 5.2 **int8 PTQ支持**
-主要编写了`ImageNetEntropyCalibrator`,使用imagenet的validation数据进行校准。
+主要编写了`ImageNetEntropyCalibrator`，使用imagenet的validation数据进行校准。
 
 ### 5.3 **swish插件编写**
-在使用了nsys分析fp16 baseline的结果时，发现conv算子(计算密集型)与trt合并的swish算子(访存密集型)所花费的时间差不多，说明trt融合后的swish算子可能出现了memory bound，所以具有一定的优化空间。当前一共实现了两个版本的swish plugin，分别是基于oneflow-elementwise模板与cudnn API的，均能够在trt8.4中运行。
+在使用了nsys分析fp16 baseline的结果时，发现conv算子(计算密集型)与trt合并的swish算子(访存密集型)所花费的时间差不多，说明trt融合后的swish算子可能出现了memory bound，所以具有一定的优化空间。当前一共实现了两个版本的swish plugin以及swish+conv plugin，分别是基于oneflow-elementwise模板与cudnn API/cudnn_fronted API。
 
-### 5.4 **插件测试结果**
-测试环境是Nvidia A10 + trt8.4，使用模拟数据对不同插件的测试结果见`result_record`文件夹
 
 
 <!-- 1. 负优化的心路历程 nsys-ui
@@ -372,7 +371,7 @@ for(int i = 0; i < fc->nbFields; i++) {
 
 <!-- 当前获得一个信息：trt8.4已经能够编写性能很强的transformer plugin了，在wenet上能够获得比较好的性能提升 -->
 
-### 主要参考项目 ###
+## 主要参考项目
 1. [ml-cvnets](https://github.com/apple/ml-cvnets)
 2. [FasterTransformer](https://github.com/NVIDIA/FasterTransformer)
 3. [tensorRT-Pro](https://github.com/shouxieai/tensorRT_Pro)

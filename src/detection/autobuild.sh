@@ -18,7 +18,7 @@ do
         ;;
         'h')
         echo "示例输入：autobuild.sh -a 1 -t 1 -p \"cocopath\"; -a 代表是否使用fp16，-t 代表是否使用coco进行精度测试, -p 代表测试集路径"
-        exit 1;;
+        exit 0;;
         ':')
         echo "未输入 $OPTARG 对应的值"
         exit 1;;
@@ -54,6 +54,7 @@ if [ "$testAcc" -eq "1"]; then
     jsonPath2="mobilevit_ssd_det_FP32.json"
     if [ "$usefp16" -eq "1"]; then
         jsonPath2="mobilevit_ssd_det_FP16.json"
+    fi
     # python3 coco_eval.py --ano_filepath /root/trt2022_src/mobilenet/dataset/fast-ai-coco/annotations/instances_val2017.json --result_filepath mobilevit_ssd_det_FP32.json
     python3 coco_eval.py --ano_filepath ${jsonPath1} --result_filepath ${jsonPath2}
 fi

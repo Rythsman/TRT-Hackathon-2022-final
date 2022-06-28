@@ -17,7 +17,7 @@ do
         ;;
         'h')
         echo "示例输入：autobuild.sh -a 1 -t 1 ; -a 代表是否使用fp16，-t 代表是否使用imagenet进行精度测试（需自行下载数据集）"
-        exit 1;;
+        exit 0;;
         ':')
         echo "未输入 $OPTARG 对应的值"
         exit 1;;
