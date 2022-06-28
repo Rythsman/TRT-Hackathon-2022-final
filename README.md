@@ -252,7 +252,7 @@ SSD-MobileVit使用**coco**数据集进行测试，batch_size=32，每一帧处�
 
 -----------
 ## 五、经验与体会
-根据nsys分析结果尝试编写一些插件替换性能不足的算子，主要包括几个plugin的编写与int8 PTQ的尝试，**plugin部分**代码在`trt_plugin`文件夹中，**int8量化**部分具体代码位于`src/Classification/int8_process.py`。使用fastertransformer、layernorm、attention plugin后并没有提升速度，使用swish plguin、swish+conv plugin 虽然对精度提升了一个数量级，但推理延时却长了1.5%（bs=128：113.574ms vs 115.275ms），int8 ptq量化虽然推理延时小于fp16结果（bs=128：41.793ms vs 40.303ms）但却带来了比较大的误差。上述各种优化方案的具体测试结果见`result_record`文件夹，plugin相关代码在`trt_plugin`中，int8 ptq代码为`src/classification/int8_process.py`（需要自行下载imagenet校准数据集），测试环境是Nvidia A10 + trt8.4。
+根据nsys分析结果尝试编写一些插件替换性能不足的算子，主要包括几个plugin的编写与int8 PTQ的尝试，**plugin部分**代码在`trt_plugin`文件夹中，**int8量化**部分（需要自行下载imagenet校准数据集）具体代码位于`src/Classification/int8_process.py`。使用fastertransformer、layernorm、attention plugin后并没有提升速度，使用swish plguin、swish+conv plugin 虽然对精度提升了一个数量级，但推理延时却长了1.5%（bs=128：113.574ms vs 115.275ms），int8 ptq量化虽然推理延时小于fp16结果（bs=128：41.793ms vs 40.303ms）但却带来了比较大的误差。上述各种优化方案的具体测试结果见`result_record`文件夹，测试环境是Nvidia A10 + trt8.4。
 
 下面简单介绍我们的优化过程，以及在该过程中遇到的一些问题。
 
