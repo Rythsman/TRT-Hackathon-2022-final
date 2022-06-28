@@ -1510,11 +1510,17 @@ namespace MobileVitDet
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
     ///! load onnx && compile tensorRT engine
     int deviceid = 0;
+
+    if (argc != 4)
+        INFOF("请输入3个参数：1. 是否使用fp16；2.是否测试精度；3.精度测试数据集路径");
+
     MobileVitDet::Mode mode = MobileVitDet::Mode::FP32;
+    if (!strcmp(argv[1], "1"))
+        mode = MobileVitDet::Mode::FP16;
     auto modeName =  MobileVitDet::mode_string(mode);
     MobileVitDet::set_device(deviceid);
 
@@ -1532,10 +1538,16 @@ int main()
     MobileVitDet::inference(deviceid, trt_file, mode, model_name, "./images");
 
     ///! readimage && preprocess && infer (need opencv) && decode output
-    auto images = MobileVitDet::scan_dataset("/root/trt2022_src/mobilenet/dataset/fast-ai-coco/images/val2017");
-    MobileVitDet::inference(images, deviceid, trt_file, mode, model_name);
-    std::string json_path = iLogger::format("./mobilevit_ssd_det_%s.json", modeName);
-    MobileVitDet::save_to_json(images, json_path);
+    if (!strcmp(argv[2], "1"))
+    {
+        std::string curPath(argv[3]);
+        curPath += "/images/val2017";
+        // auto images = MobileVitDet::scan_dataset("/root/trt2022_src/mobilenet/dataset/fast-ai-coco/images/val2017");
+        auto images = MobileVitDet::scan_dataset(curPath);
+        MobileVitDet::inference(images, deviceid, trt_file, mode, model_name);
+        std::string json_path = iLogger::format("./mobilevit_ssd_det_%s.json", modeName);
+        MobileVitDet::save_to_json(images, json_path);
+    }
 
     return 0;
 

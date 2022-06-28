@@ -32,10 +32,11 @@ CPP_OBJ     = $(SOURCE_CPP:.cpp=.cpp.o)
 # $(NVCC) $(SOFLAG) -o $@.so $^ $(LDFLAG)
 all: $(CU_OBJ) $(CPP_OBJ)
 	$(NVCC) $(SOFLAG) -o ./mobileVitDet $^ $(LDFLAG)
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(CUDA_HOME)/lib64:$(TRT_HOME)/lib:$(OPENCV_LIB) ./mobileVitDet
-	# @echo "test Python code"
-	# python3 test.py
 # $(SOURCE_CU:%.cu=%.so)
+
+# LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(CUDA_HOME)/lib64:$(TRT_HOME)/lib:$(OPENCV_LIB) ./mobileVitDet
+# @echo "test Python code"
+# python3 test.py
 
 # %.so: %.cu.o
 # 	$(NVCC) $(SOFLAG) $(LDFLAG) -o $@ $^
