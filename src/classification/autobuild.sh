@@ -48,6 +48,8 @@ else
     python3 export_engine.py --engine_filepath mobilevit_s.engine --onnx_filepath ./mobilevit_s.onnx
 fi
 
+mkdir -p log
+
 # 速度测试
 if [ "$usefp16" -eq "1" ];then
     echo "--------testing speed use fp16------------------"

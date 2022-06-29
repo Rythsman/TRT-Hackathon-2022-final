@@ -47,6 +47,8 @@ if [ "$usefp16" -eq "1" ];then
 else
     echo "-------- generate trt engine & test using fp32 -------"
 fi
+
+mkdir -p log
 ./mobileVitDet usefp16 testAcc testAccPath > ./log/log.txt
 
 if [ "$testAcc" -eq "1"]; then

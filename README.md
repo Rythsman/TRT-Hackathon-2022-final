@@ -6,10 +6,10 @@
 本次复赛我们选择使用TensorRT优化部署的模型是[MobileVit](https://arxiv.org/abs/2110.02178)，该项工作由Apple的研究者发表在ICLR2022上，项目开源在[地址](https://github.com/apple/ml-cvnets)。
 
 ### 1.1 代码编译运行说明
-1. 自行下载配置tensorRT，报告中的测试结果是在A10显卡上使用tensorRT8.4GA进行测试的
-2. 运行`build_env/build.sh`文件进行代码所需的环境配置
-3. 运行`src/classification/autobuild.sh`进行mobileVit分类模型的导出及精度与速度测试，直接运行`autobuild.sh`代表使用fp32且仅进行速度测试，如果需要使用fp16且进行精度测试，请使用`autobuild.sh -a 1 -t 1`，具体参数含义请见`autobuild.sh -h`
-4. 运行`src/detection/autobuild.sh`进行ssd-mobileVit检测模型的导出及精度与速度测试（注意按照sh文件内容修改相应dataset路径），直接运行`autobuild.sh`代表使用fp32且仅进行速度测试，示例图片测试结果请见`src/detection`目录下的`*result*`文件夹，如需运行其他模式请见`autobuild.sh -h`
+1. 编译运行代码需要有能正常运行tensorRT的docker（可以从NVIDIA的NGC自行下载），同时运行脚本时必须是root身份。报告中的测试结果是在A10显卡上使用tensorRT8.4GA进行测试的
+2. 运行`cd build_env && build.sh`文件进行代码所需的环境配置
+3. 运行`cd src/classification && sh autobuild.sh`进行mobileVit分类模型的导出及精度与速度测试，直接运行`autobuild.sh`代表使用fp32且仅进行速度测试，如果需要使用fp16且进行精度测试，请使用`autobuild.sh -a 1 -t 1`，具体参数含义请见`autobuild.sh -h`
+4. 运行`cd src/detection && autobuild.sh`进行ssd-mobileVit检测模型的导出及精度与速度测试（注意按照sh文件内容修改相应dataset路径），直接运行`autobuild.sh`代表使用fp32且仅进行速度测试，示例图片测试结果请见`src/detection`目录下的`*result*`文件夹，如需运行其他模式请见`autobuild.sh -h`
 > 说明：如果需要进行分类与检测模型的精度测试，请自行下载ImageNet数据集以及MS-COCO数据集，同时修改`src/ml-cvnets/pretained_models/*.yaml`中dataset路径。`ml-cvnets/gen_npz.py`为生成模拟数据的脚本，用于测试速度，可在分类与检测文件夹中的`autobuild.sh`查看使用方法
 ---
 
