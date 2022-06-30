@@ -34,7 +34,7 @@ MobileVit共有三种不同的网络规模(XXS，XS，S)，参数量逐渐升高
 ### 3.1 ONNX模型导出
 修改官网提供的代码导出onnx模型，这个步骤主要是参照官方提供的`main_eval.py`进行实现，通过将`multi_head_attention.py`与`mobilevit_block.py`中reshape操作的`-1`放在第一维度即可支持动态shape的输入。具体原则如下
 
-1. 对于任何用到shape、size返回值的参数时，例如：tensor.view(tensor.size(0), -1)，B,C,H,W = x.shape 这类操作，避免直接使用tensor.size的返回值，而是加上int转换，tensor.view(int(tensor.size(0)), -1), B,C,H,W = map(int, x.shape)，断开跟踪。
+1. 对于任何用到shape、size返回值的参数，例如：tensor.view(tensor.size(0), -1)，B,C,H,W = x.shape 这类操作，避免直接使用tensor.size的返回值，而是加上int转换，tensor.view(int(tensor.size(0)), -1), B,C,H,W = map(int, x.shape)，断开跟踪。
 
 2. 对于reshape、view操作时，-1的指定请放到batch维度。其他维度计算出来即可。batch维度禁止指定为大于-1的明确数字。如果是一维，那么直接指定为-1就好。
 
@@ -80,10 +80,10 @@ MobileVit共有三种不同的网络规模(XXS，XS，S)，参数量逐渐升高
 ### 3.4 SSD-MobileVit模型基于C++/CUDA的端到端部署实现
 当前模型的的实现步骤主要分为以下两个过程：
 #### 3.4.1 **导出模型**
-- 官方提供的源码中并不支持动态shape的导出过程，需要在源代码中做出如下修改：
+- 官方提供的源码中并不支持动态shape的导出过程，我们在`ml-cvnets/cvnets/models/detection/ssd.py`添加了`export_onnx_forward`方法，主要目的是简化onnx模型的输出部分，这样就可以直接在CUDA端操作一个矩阵即可；此外在`ml-cvnets/cvnets/modules/ssd.py`中的`forward`方法中做了支持动态shape的相关修改，具体规则与`3.1 ONNX模型导出`章节的说明一致
 
 ```python
-# ml-cvnets/cvnets/models/detection/ssd.py 添加如下代码，output形状为[-1, 85]
+# ml-cvnets/cvnets/models/detection/ssd.py 添加如下代码，这里主要是将输出张量进行concat操作，以简化onnx图，output形状为[-1, 85]
     def export_onnx_forward(self, x: Tensor, *args, **kwargs):
         with torch.no_grad():
             confidences, locations, anchors = self.ssd_forward(x, is_prediction=True)
